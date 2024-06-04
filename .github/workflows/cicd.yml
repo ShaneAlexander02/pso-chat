@@ -25,7 +25,7 @@ jobs:
         run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
       - name: publish image to docker hub
         run: docker push shanealexander09/pso-chat-docker:latest
-
+  ##deploy dockerhub
   deploy:
     needs: build
     runs-on: self-hosted
