@@ -14,6 +14,7 @@ jobs:
       - name: Checkout Source
         uses: actions/checkout@v4
       - name: buat file .env
+        run: |
           echo "CLERK_SECRET_KEY=${{secrets.CLERK_SECRET_KEY}}" >> .env
           echo "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=${{secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}}" >> .env
           echo "NEXT_PUBLIC_CONVEX_URL=${{secrets.NEXT_PUBLIC_CONVEX_URL}}" >> .env
