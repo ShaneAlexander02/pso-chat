@@ -18,7 +18,8 @@ jobs:
           echo "CLERK_SECRET_KEY=${{secrets.CLERK_SECRET_KEY}}" >> .env
           echo "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=${{secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}}" >> .env
           echo "NEXT_PUBLIC_CONVEX_URL=${{secrets.NEXT_PUBLIC_CONVEX_URL}}" >> .env
-          echo "CONVEX_DEPLOYMENT=${{secrets.CONVEX_DEPLOYMENT}}" >> .env | echo "SITE_URL=${secrets.SITE_URL}} >> .env
+          echo "CONVEX_DEPLOYMENT=${{secrets.CONVEX_DEPLOYMENT}}" >> .env 
+          echo "SITE_URL=${{secrets.SITE_URL}} >> .env
       - name: buat docker image
         run: docker build -t shanealexander09/pso-chat-docker .
       - name: Login docker hub
