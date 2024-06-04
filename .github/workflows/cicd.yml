@@ -1,0 +1,37 @@
+name: Deploy Next.js application
+
+on:
+  push:
+    branches:
+      - master
+      - signup-login
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@v4
+      - name: buat file .env
+        run: echo "CLERK_SECRET_KEY=${{sk_test_SaJjcoernEafLFWdfV814cEb6ysvBm3xijnZHGjf6R}}" >> .env
+        run: echo "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=${{pk_test_aG9uZXN0LWNyYXlmaXNoLTc1LmNsZXJrLmFjY291bnRzLmRldiQ}}" >> .env
+        run: echo "NEXT_PUBLIC_CONVEX_URL=${{https://quirky-anaconda-548.convex.cloud}}" >> .env
+        run: echo "NEXT_PUBLIC_CONVEX_URL=${{dev:quirky-anaconda-548}}" >> .env
+        run: echo "SITE_URL=${{ec2-3-25-103-83.ap-southeast-2.compute.amazonaws.com}} >> .env
+      - name: buat docker image
+        run: docker build -t shanealexander09/pso-chat-docker .
+      - name: Login docker hub
+        run: docker login -u ${{shanealexander09}} -p ${{Shane09102002.}}
+      - name: publish image to docker hub
+        run: docker push shanealexander09/pso-chat-docker:latest
+  
+  deploy:
+    needs: build
+    runs-on: self-hosted
+    steps:
+      - name: Pull image dockerhub
+        run: docker pull shanealexander09/pso-chat-docker:latest
+      - name: Delete old container
+        run: docker rm -f pso-chat-container
+      - name: run docker container
+        run: docker run -d -p 3000:3000 --name pso-chat-container shanealexander09/pso-chat-docker
