@@ -26,7 +26,22 @@ jobs:
         run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
       - name: publish image to docker hub
         run: docker push shanealexander09/pso-chat-docker:latest
-  ##deploy dockerhub
+
+    ##testing
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 20.9.0
+      - name: Install dependencies
+        run: npm install
+      - name: Run tests
+        run:
+          npm test
+
+          ##deploy dockerhub
   deploy:
     needs: build
     runs-on: self-hosted
@@ -37,3 +52,4 @@ jobs:
         run: docker rm -f pso-chat-container
       - name: run docker container
         run: docker run -d -p 3000:3000 --name pso-chat-container shanealexander09/pso-chat-docker
+## docker udah connect ke aws ec2
