@@ -29,6 +29,7 @@ jobs:
 
     ##testing
   tests:
+    needs: build # Add this line to specify that the tests job needs the build job to complete first
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Source
@@ -40,11 +41,12 @@ jobs:
           node-version: 20.9.0
 
       - name: Change Working Directory
-        run: cd ${{ github.workspace }}
+        run: cd ${{ github.workspace }}/pso-chat
 
       - name: Run tests
-        run:
-          npm test
+        run: npm test
+        working-directory:
+          ${{ github.workspace }}/pso-chat
 
           ##deploy dockerhub
   deploy:
