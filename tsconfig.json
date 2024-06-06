@@ -1,11 +1,6 @@
 {
   "compilerOptions": {
-    "typeRoots": [
-      "../node_modules/@types",
-      "./node_modules/@types",
-      "../node_modules/@testing-library"
-    ],
-    "types": ["jest", "jest-dom"],
+    "types": ["node", "jest", "@testing-library/jest-dom"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -24,7 +19,8 @@
     ],
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "lib": ["dom", "dom.iterable", "esnext"]
   },
   "include": [
     "next-env.d.ts",
