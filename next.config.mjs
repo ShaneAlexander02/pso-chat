@@ -1,8 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  images: {
-    domains: ["www.shutterstock.com"],
-  },
+  async redirects() {
+    return [
+      {
+        source: "/",
+        destination: "/conversations",
+        permanent: true,
+
+      }
+    ]
+  }
 };
 
 export default nextConfig;

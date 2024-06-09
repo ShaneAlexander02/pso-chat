@@ -1,4 +1,4 @@
-import { MessageSquare, Users } from "lucide-react";
+import { MessageSquare, MessagesSquare, Users } from "lucide-react";
 import { usePathname } from "next/navigation"
 import { useMemo } from "react";
 
@@ -9,7 +9,7 @@ export const useNavigation = () => {
         {
             name: "Conversations",
             href: "/conversations",
-            icon: <MessageSquare />, 
+            icon: <MessageSquare />,
             active: pathname.startsWith("/conversations"),
 
         },
