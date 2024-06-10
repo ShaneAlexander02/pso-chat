@@ -7,7 +7,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { useConversation } from "@/hooks/useConversation";
 import { useNavigation } from "@/hooks/useNavigation";
 import { UserButton } from "@clerk/nextjs";
-import { Link } from "lucide-react";
+import  Link  from "next/link";
 
 const MobileNav = () => {
     const paths = useNavigation();
