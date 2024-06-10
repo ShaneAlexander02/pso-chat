@@ -4,6 +4,7 @@ import "./globals.css";
 import React from "react";
 import { Providers } from "./providers";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { ThemeProvider } from "@/components/ui/theme/theme-provider";
 
 
 const inter = Inter({ subsets: ["latin"] });
@@ -21,7 +22,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Providers><TooltipProvider>{children}</TooltipProvider></Providers>
+        <ThemeProvider attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange>
+        <Providers><TooltipProvider>{children}
+          </TooltipProvider></Providers>
+          </ThemeProvider>
       </body>
     </html>
   );
