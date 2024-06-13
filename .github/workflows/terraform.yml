@@ -25,9 +25,11 @@ jobs:
           aws-region: ap-southeast-2
 
       - name: Initialize Terraform
+        id: init
         run: terraform init
 
       - name: Terraform Plan
+        id: plan
         run: terraform plan
 
       - name: Terraform Apply
