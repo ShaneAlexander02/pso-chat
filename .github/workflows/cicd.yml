@@ -71,7 +71,7 @@ jobs:
         id: instance_ip
         run: |
           terraform show -json > terraform.json
-          INSTANCE_IP=$(jq -r '.values.outputs.instance_ip.value' terraform.json)
+          INSTANCE_IP=$(awk '/instance_ip/ {print $NF}' terraform.json)
           echo "::set-output name=instance_ip::$INSTANCE_IP"
           rm terraform.json
       - name: Deploy Docker Container
