@@ -25,6 +25,7 @@ variable "key_name" {
 }
 
 resource "aws_key_pair" "service_key_pair" {
+  key_name   = var.key_name
   public_key = tls_private_key.rsa_4096.public_key_openssh
 }
 
@@ -33,7 +34,8 @@ resource "local_file" "private_key" {
   filename = var.key_name
 }
 
-resource "aws_security_group" "allow_http_ssh_2" {
+resource "aws_security_group" "allow_http_ssh" {
+  name_prefix = "pso-chat-terraform-"
   description = "Allow HTTP and SSH inbound traffic"
 
   ingress {
@@ -69,7 +71,7 @@ resource "aws_instance" "public_instance" {
   ami = "ami-080660c9757080771"
   instance_type = "t2.micro"
   key_name = aws_key_pair.service_key_pair.key_name
-  vpc_security_group_ids = [aws_security_group_2.allow_http_ssh_2.id]
+  vpc_security_group_ids = [aws_security_group.allow_http_ssh.id]
 
   tags = {
     Name = "instance_terraform_2"
