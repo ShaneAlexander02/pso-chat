@@ -48,10 +48,10 @@ jobs:
     needs: [build, tests]
     runs-on: self-hosted
     steps:
-      - name: Pull image dockerhub
-        run: docker pull shanealexander09/pso-chat-docker:latest
       - name: Delete old container
         run: docker rm -f pso-chat-container
+      - name: Pull image dockerhub
+        run: docker pull shanealexander09/pso-chat-docker:latest
       - name: run docker container
         run: docker run -d -p 3000:3000 --name pso-chat-container shanealexander09/pso-chat-docker
 ## docker udah connect ke aws ec2

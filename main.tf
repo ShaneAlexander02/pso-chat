@@ -21,10 +21,11 @@ resource "tls_private_key" "rsa_4096" {
 
 variable "key_name" {
   description = "psochatkey"
+  default     = "psochatkey"  # Set a default value for the key_name variable
 }
 
 resource "aws_key_pair" "key_pair" {
-  key_name   = "var.key_name"
+  key_name   = var.key_name
   public_key = tls_private_key.rsa_4096.public_key_openssh
 }
 
