@@ -33,7 +33,7 @@ resource "local_file" "private_key" {
   filename = var.key_name
 }
 
-resource "aws_security_group_2" "allow_http_ssh_2" {
+resource "aws_security_group" "allow_http_ssh_2" {
   name        = "pso-chat-terraform-5"
   description = "Allow HTTP and SSH inbound traffic"
 
@@ -70,7 +70,7 @@ resource "aws_instance" "public_instance" {
   ami = "ami-080660c9757080771"
   instance_type = "t2.micro"
   key_name = aws_key_pair.service_key_pair.key_name
-  vpc_security_group_ids = [aws_security_group_2.allow_http_ssh_2.id]
+  vpc_security_group_ids = [aws_security_group.allow_http_ssh_2.id]
 
   tags = {
     Name = "instance_terraform_2"
