@@ -69,7 +69,7 @@ jobs:
         run: |
           sudo apt-get update
 
-      - name: Get Instance IP
+      - name: Get Instance IP and Private Key
         id: instance_ip
         run: |
           INSTANCE_IP=$(terraform output -raw instance_ip)
@@ -84,6 +84,7 @@ jobs:
         env:
           INSTANCE_IP: ${{env.TEST}}
         run: |
+          ssh -vT git@github.com
           echo "Deploying Docker container to $INSTANCE_IP:3000"
           ssh -o StrictHostKeyChecking=no ec2-user@$INSTANCE_IP '
             docker pull shanealexander09/pso-chat-docker:latest
