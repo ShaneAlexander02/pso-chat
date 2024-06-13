@@ -33,8 +33,8 @@ resource "local_file" "private_key" {
   filename = var.key_name
 }
 
-resource "aws_security_group" "allow_http_ssh_2" {
-  name        = "pso-chat-terraform-5"
+resource "aws_security_group" "allow_http_ssh_3" {
+  name        = "pso-chat-terraform-3"
   description = "Allow HTTP and SSH inbound traffic"
 
   ingress {
