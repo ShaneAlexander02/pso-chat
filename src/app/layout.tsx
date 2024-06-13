@@ -5,6 +5,7 @@ import React from "react";
 import { Providers } from "./providers";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/components/ui/theme/theme-provider";
+import { Toaster } from "@/components/ui/sonner";
 
 
 const inter = Inter({ subsets: ["latin"] });
@@ -26,8 +27,10 @@ export default function RootLayout({
             defaultTheme="system"
             enableSystem
             disableTransitionOnChange>
-        <Providers><TooltipProvider>{children}
-          </TooltipProvider></Providers>
+        <Providers>
+          <TooltipProvider>{children}</TooltipProvider>
+          <Toaster richColors/> 
+          </Providers>
           </ThemeProvider>
       </body>
     </html>

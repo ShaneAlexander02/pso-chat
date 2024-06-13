@@ -7,6 +7,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { useConversation } from "@/hooks/useConversation";
 import { useNavigation } from "@/hooks/useNavigation";
 import { UserButton } from "@clerk/nextjs";
+import { Badge } from "lucide-react";
 import  Link  from "next/link";
 
 const MobileNav = () => {
@@ -28,6 +29,7 @@ const MobileNav = () => {
                                 <Button size="icon" variant={path.active ? "default" : "outline"}>
                                     {path.icon}
                                 </Button>
+                                {path.count ? <Badge className="absolute left-6 bottom-7"> {path.count}</Badge> : null}
                             </TooltipTrigger> 
                             <TooltipContent>
                                 <p>{path.name}</p>
