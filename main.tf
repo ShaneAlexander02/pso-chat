@@ -25,7 +25,7 @@ variable "key_name" {
 }
 
 resource "aws_key_pair" "key_pair" {
-  key_name   = var.key_name
+  key_name   = "var.key_name"
   public_key = tls_private_key.rsa_4096.public_key_openssh
 }
 
