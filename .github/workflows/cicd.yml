@@ -67,15 +67,11 @@ jobs:
       - name: Install jq
         run: |
           sudo apt-get update
-          sudo apt-get install -y jq
 
       - name: Get Instance IP
         id: instance_ip
         run: |
-          terraform show -json > terraform.json
-          INSTANCE_IP=$(jq -r '.values.outputs.instance_ip.value' terraform.json)
-          echo "::set-output name=instance_ip::$INSTANCE_IP"
-          rm terraform.json
+          echo "::set-output name=instance_ip::$(terraform output -raw instance_ip)"
 
       - name: Debug Instance IP
         run: echo "Instance IP is ${{ steps.instance_ip.outputs.instance_ip }}"
