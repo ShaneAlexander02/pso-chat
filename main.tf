@@ -69,7 +69,7 @@ resource "aws_instance" "public_instance" {
   ami = "ami-080660c9757080771"
   instance_type = "t2.micro"
   key_name = aws_key_pair.service_key_pair.key_name
-  vpc_security_group_ids = [aws_security_group_.allow_http_ssh.id]
+  vpc_security_group_ids = [aws_security_group.allow_http_ssh.id]
 
   tags = {
     Name = "instance_terraform_2"
