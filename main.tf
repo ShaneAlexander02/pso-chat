@@ -24,8 +24,7 @@ variable "key_name" {
   default     = "terraform-key"  # Replace with a unique name
 }
 
-resource "aws_key_pair" "key_pair" {
-  key_name   = "terraform-key"
+resource "aws_key_pair" "service_key_pair" {
   public_key = tls_private_key.rsa_4096.public_key_openssh
 }
 
@@ -70,7 +69,7 @@ resource "aws_security_group" "allow_http_ssh" {
 resource "aws_instance" "public_instance" {
   ami = "ami-080660c9757080771"
   instance_type = "t2.micro"
-  key_name = aws_key_pair.key_pair.key_name
+  key_name = aws_key_pair.service_key_pair.key_name
   vpc_security_group_ids = [aws_security_group.allow_http_ssh.id]
 
   tags = {
