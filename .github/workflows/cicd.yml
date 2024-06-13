@@ -63,22 +63,26 @@ jobs:
         run: terraform plan -out=plan.out
       - name: Terraform Apply
         run: terraform apply plan.out
+
       - name: Install jq
         run: |
           sudo apt-get update
           sudo apt-get install -y jq
+
       - name: Get Instance IP
         id: instance_ip
         run: |
           terraform show -json > terraform.json
-          INSTANCE_IP=$(awk '/instance_ip/ {print $NF}' terraform.json)
+          INSTANCE_IP=$(jq -r '.values.outputs.instance_ip.value' terraform.json)
           echo "::set-output name=instance_ip::$INSTANCE_IP"
           rm terraform.json
+
       - name: Debug Instance IP
         run: echo "Instance IP is ${{ steps.instance_ip.outputs.instance_ip }}"
+
       - name: Deploy Docker Container
         env:
-          INSTANCE_IP: ${{ env.INSTANCE_IP }}
+          INSTANCE_IP: ${{ steps.instance_ip.outputs.instance_ip }}
         run: |
           echo "Deploying Docker container to $INSTANCE_IP:3000"
           ssh -o StrictHostKeyChecking=no ec2-user@$INSTANCE_IP '
