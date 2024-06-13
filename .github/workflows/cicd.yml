@@ -5,7 +5,7 @@ on:
       - main
       - master
 jobs:
-  build-and-push-docker:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Source
@@ -22,9 +22,24 @@ jobs:
         with:
           push: true
           tags: shanealexander09/pso-chat-docker:latest
-
+  tests:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 20.9.0
+      - name: install jest dll
+        run: npm install
+      - name: Run tests
+        run:
+          npm test
+          ##deploy dockerhub
   deploy:
-    needs: build-and-push-docker
+    needs: tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Source
@@ -36,8 +51,8 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-access-key-id: AKIA2UC3CNSNREMYGWFH
+          aws-secret-access-key: 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
           aws-region: ap-southeast-2
       - name: Initialize Terraform
         id: init
