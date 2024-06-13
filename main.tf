@@ -20,12 +20,12 @@ resource "tls_private_key" "rsa_4096" {
 }
 
 variable "key_name" {
-  description = "terraform-psochat-key"
+  description = "terraform-key"
   default     = "terraform-key"  # Replace with a unique name
 }
 
 resource "aws_key_pair" "key_pair" {
-  key_name   = "var.key_name"
+  key_name   = "terraform-key"
   public_key = tls_private_key.rsa_4096.public_key_openssh
 }
 
