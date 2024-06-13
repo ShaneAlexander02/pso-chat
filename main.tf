@@ -20,8 +20,8 @@ resource "tls_private_key" "rsa_4096" {
 }
 
 variable "key_name" {
-  description = "psochatkey"
-  default     = "psokey2"  # Replace with a unique name
+  description = "terraform-psochat-key"
+  default     = "terraform-key"  # Replace with a unique name
 }
 
 resource "aws_key_pair" "key_pair" {
@@ -35,7 +35,7 @@ resource "local_file" "private_key" {
 }
 
 resource "aws_security_group" "allow_http_ssh" {
-  name        = "pso-chat-terraform"
+  name        = "pso-chat-terraform-2"
   description = "Allow HTTP and SSH inbound traffic"
 
   ingress {
