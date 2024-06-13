@@ -1,57 +1,65 @@
 name: Deploy Next.js application
-##nambah branch
 on:
   push:
     branches:
       - main
       - master
-
 jobs:
-  build:
+  build-and-push-docker:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Source
         uses: actions/checkout@v4
-      - name: buat file .env
-        run: |
-          echo "CLERK_SECRET_KEY=${{secrets.CLERK_SECRET_KEY}}" >> .env
-          echo "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=${{secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}}" >> .env
-          echo "NEXT_PUBLIC_CONVEX_URL=${{secrets.NEXT_PUBLIC_CONVEX_URL}}" >> .env
-          echo "CONVEX_DEPLOYMENT=${{secrets.CONVEX_DEPLOYMENT}}" >> .env 
-          echo "SITE_URL=${{secrets.SITE_URL}}" >> .env
-      - name: buat docker image
-        run: docker build -t shanealexander09/pso-chat-docker .
-      - name: Login docker hub
-        run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
-      - name: publish image to docker hub
-        run: docker push shanealexander09/pso-chat-docker:latest
-
-    ##testing
-  tests:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Source
-        uses: actions/checkout@v4
-      - name: Setup Node
-        uses: actions/setup-node@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
         with:
-          node-version: 20.9.0
-      - name: install jest dll
-        run: npm install
-      - name: Run tests
-        run:
-          npm test
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v3
+        with:
+          push: true
+          tags: shanealexander09/pso-chat-docker:latest
 
-          ##deploy dockerhub
   deploy:
-    needs: [build, tests]
-    runs-on: self-hosted
+    needs: build-and-push-docker
+    runs-on: ubuntu-latest
     steps:
-      - name: Delete old container
-        run: docker rm -f pso-chat-container
-      - name: Pull image dockerhub
-        run: docker pull shanealexander09/pso-chat-docker:latest
-      - name: run docker container
-        run: docker run -d -p 3000:3000 --name pso-chat-container shanealexander09/pso-chat-docker
-## docker udah connect ke aws ec2
+      - name: Checkout Source
+        uses: actions/checkout@v4
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.8.5
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-southeast-2
+      - name: Initialize Terraform
+        id: init
+        run: terraform init
+      - name: Terraform Plan
+        id: plan
+        run: terraform plan -out=plan.out
+      - name: Terraform Apply
+        run: terraform apply plan.out
+      - name: Get Instance IP
+        id: instance_ip
+        run: |
+          INSTANCE_IP=$(terraform output instance_ip)
+          echo "::set-output name=instance_ip::$INSTANCE_IP"
+      - name: Deploy Docker Container
+        env:
+          INSTANCE_IP: ${{ steps.instance_ip.outputs.instance_ip }}
+        run: |
+          echo "Deploying Docker container to $INSTANCE_IP:3000"
+          ssh -o StrictHostKeyChecking=no ec2-user@$INSTANCE_IP '
+            docker pull shanealexander09/pso-chat-docker:latest
+            docker stop pso-chat-container || true
+            docker rm pso-chat-container || true
+            docker run -d -p 3000:3000 --name pso-chat-container shanealexander09/pso-chat-docker:latest
+          '
