@@ -90,9 +90,8 @@ jobs:
           aws-secret-access-key: ${{secrets.TF_USER_AWS_SECRET}}
           aws-region: ap-southeast-2
         run: |
-          chmod -R go-rwx ~/.ssh.
-          ssh -T git@github.com
           echo "Deploying Docker container to $INSTANCE_IP:3000"
+          ssh -T git@github.com
           ssh -o StrictHostKeyChecking=no ec2-user@$INSTANCE_IP '
             docker pull shanealexander09/pso-chat-docker:latest
             docker stop pso-chat-container || true
