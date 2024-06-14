@@ -17,6 +17,13 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: buat file .env
+        run: |
+          echo "CLERK_SECRET_KEY=${{secrets.CLERK_SECRET_KEY}}" >> .env
+          echo "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=${{secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}}" >> .env
+          echo "NEXT_PUBLIC_CONVEX_URL=${{secrets.NEXT_PUBLIC_CONVEX_URL}}" >> .env
+          echo "CONVEX_DEPLOYMENT=${{secrets.CONVEX_DEPLOYMENT}}" >> .env
+          echo "SITE_URL=${{secrets.SITE_URL}}" >> .env
       - name: Build and push Docker image
         uses: docker/build-push-action@v3
         with:
@@ -87,7 +94,7 @@ jobs:
         with:
           host: ${{env.TEST}}
           username: instance_terraform_2
-          key: ${{secrets.SSH_PUBLIC_KEY}}
+          key: ${{secrets.SSH_PRIVATE_KEY}}
           envs: |
             INSTANCE_IP: ${{env.TEST}}
             SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
