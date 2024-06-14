@@ -67,10 +67,14 @@ jobs:
         run: terraform plan -out=plan.out
       - name: Terraform Apply
         run: terraform apply plan.out
+        env:
+          TF_VAR_access_key: ${{ secrets.TF_USER_AWS_KEY }}
+          TF_VAR_secret_key: ${{ secrets.TF_USER_AWS_SECRET }}
 
-      - name: Install jq
+      - name: Get Private Key
         run: |
-          sudo apt-get update
+          PRIVATE_KEY=$(terraform output -raw private_key)
+          echo "PRIVATE_KEY=$PRIVATE_KEY" >> $GITHUB_ENV
 
       - name: Get Instance IP
         id: instance_ip
@@ -84,16 +88,18 @@ jobs:
         run: echo "Instance IP is ${{env.TEST }}"
 
       - name: Deploy Docker Container
-        env:
-          INSTANCE_IP: ${{env.TEST}}
-          aws-access-key-id: ${{ secrets.TF_USER_AWS_KEY }}
-          aws-secret-access-key: ${{secrets.TF_USER_AWS_SECRET}}
-          aws-region: ap-southeast-2
-        run: |
-          echo "Deploying Docker container to $INSTANCE_IP:3000"
-          ssh -o StrictHostKeyChecking=no ec2-user@$INSTANCE_IP '
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{env.TEST}}
+          username: Shane Alexander
+          key: ${{ env.PRIVATE_KEY }}
+          envs: |
+            INSTANCE_IP: ${{env.TEST}}
+            aws-access-key-id: ${{ secrets.TF_USER_AWS_KEY }}
+            aws-secret-access-key: ${{secrets.TF_USER_AWS_SECRET}}
+            aws-region: ap-southeast-2
+          script: |
             docker pull shanealexander09/pso-chat-docker:latest
             docker stop pso-chat-container || true
             docker rm pso-chat-container || true
             docker run -d -p 3000:3000 --name pso-chat-container shanealexander09/pso-chat-docker:latest
-          '
