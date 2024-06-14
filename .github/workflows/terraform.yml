@@ -1,7 +1,8 @@
 name: Deploy Next.js application
 on:
   push:
-
+    branches:
+      - signup-login
 jobs:
   build:
     runs-on: ubuntu-latest
