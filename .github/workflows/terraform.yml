@@ -2,7 +2,9 @@ name: Deploy Next.js application
 on:
   push:
     branches:
-      - signup-login
+      - master
+      - main
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -83,26 +85,13 @@ jobs:
           INSTANCE_IP=$(terraform output -raw instance_ip)
           echo "::set-output name=instance_ip::$INSTANCE_IP"
           echo "TEST=$INSTANCE_IP" >> $GITHUB_ENV
-          echo ${{ env.TEST }}
+          echo ${{ env.INSTANCE_IP }}
 
       - name: Debug Instance IP
-        run: echo "Instance IP is ${{env.TEST }}"
+        run: echo "Instance IP is ${{env.INSTANCE_IP}}"
 
-      - name: Deploy Docker Container
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{env.TEST}}
-          username: instance_terraform_2
-          key: ${{secrets.SSH_PRIVATE_KEY}}
-          envs: |
-            INSTANCE_IP: ${{env.TEST}}
-            SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-            aws-access-key-id: ${{ secrets.TF_USER_AWS_KEY }}
-            aws-secret-access-key: ${{secrets.TF_USER_AWS_SECRET}}
-            aws-region: ap-southeast-2
-            SSH_PUBLIC_KEY : ${{secrets.SSH_PUBLIC_KEY}}
-          script: |
-            docker pull shanealexander09/pso-chat-docker:latest
-            docker stop pso-chat-container || true
-            docker rm pso-chat-container || true
-            docker run -d -p 3000:3000 --name pso-chat-container shanealexander09/pso-chat-docker:latest
+      - name: Push Docker Image to EC2 Instance
+        run: |
+          ssh -o StrictHostKeyChecking=no -i ${{ secrets.SSH_PRIVATE_KEY }} ec2-user@${{ env.INSTANCE_IP }} 'docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}'
+          ssh -o StrictHostKeyChecking=no -i ${{ secrets.SSH_PRIVATE_KEY }} ec2-user@${{ env.INSTANCE_IP }} 'docker pull shanealexander09/pso-chat-docker:latest'
+          ssh -o StrictHostKeyChecking=no -i ${{ secrets.SSH_PRIVATE_KEY }} ec2-user@${{ env.INSTANCE_IP }} 'docker run -d -p 3000:3000 shanealexander09/pso-chat-docker:latest'
