@@ -90,10 +90,11 @@ jobs:
       - name: Get SSH Private Key
         id: ssh_private_key
         run: |
-          SSH_PRIVATE_KEY=$(cat terraform-key.pem)
+          SSH_PRIVATE_KEY=$(terraform output -json tls_private_key.rsa_4096.private_key_pem)
+          SSH_PRIVATE_KEY="${SSH_PRIVATE_KEY//\\"}"  # Remove double quotes from the JSON output
           echo "::set-output name=ssh_private_key::$SSH_PRIVATE_KEY"
           echo "SSH_PRIVATE_KEY=$SSH_PRIVATE_KEY" >> $GITHUB_ENV
-          echo ${{ env.SSH_PRIVATE_KEY }}
+          echo "$SSH_PRIVATE_KEY" > ssh_private_key.pem  # Write the private key to a file
 
       - name: Debug Instance IP
         run: echo "Instance IP is ${{env.INSTANCE_IP}}"
@@ -103,9 +104,7 @@ jobs:
 
       - name: Push Docker Image to EC2 Instance
         run: |
-          mkdir -p ~/.ssh
-          echo "${{ env.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ec2-user@${{ env.INSTANCE_IP }} 'docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}'
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ec2-user@${{ env.INSTANCE_IP }} 'docker pull shanealexander09/pso-chat-docker:latest'
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ec2-user@${{ env.INSTANCE_IP }} 'docker run -d -p 3000:3000 shanealexander09/pso-chat-docker:latest'
+          chmod 600 ssh_private_key.pem
+          ssh -o StrictHostKeyChecking=no -i ssh_private_key.pem ec2-user@${{ env.INSTANCE_IP }} 'docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}'
+          ssh -o StrictHostKeyChecking=no -i ssh_private_key.pem ec2-user@${{ env.INSTANCE_IP }} 'docker pull shanealexander09/pso-chat-docker:latest'
+          ssh -o StrictHostKeyChecking=no -i ssh_private_key.pem ec2-user@${{ env.INSTANCE_IP }} 'docker run -d -p 3000:3000 shanealexander09/pso-chat-docker:latest'
