@@ -110,6 +110,6 @@ jobs:
           TF_VAR_secret_key: ${{ secrets.TF_USER_AWS_SECRET }}
           INSTANCE_IP: ${{ env.INSTANCE_IP }}
         run: |
-          ssh -o StrictHostKeyChecking=no -i ssh_private_key.pem instance_terraform_2@${{ env.INSTANCE_IP }} 'docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}'
-          ssh -o StrictHostKeyChecking=no -i ssh_private_key.pem instance_terraform_2@${{ env.INSTANCE_IP }} 'docker pull shanealexander09/pso-chat-docker:latest'
-          ssh -o StrictHostKeyChecking=no -i ssh_private_key.pem instance_terraform_2@${{ env.INSTANCE_IP }} 'docker run -d -p 3000:3000 shanealexander09/pso-chat-docker:latest'
+          ssh -o StrictHostKeyChecking=no -i ssh_private_key.pem ubuntu@${{ env.INSTANCE_IP }} 'docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}'
+          ssh -o StrictHostKeyChecking=no -i ssh_private_key.pem ubuntu@${{ env.INSTANCE_IP }} 'docker pull shanealexander09/pso-chat-docker:latest'
+          ssh -o StrictHostKeyChecking=no -i ssh_private_key.pem ubuntu@${{ env.INSTANCE_IP }} 'docker run -d -p 3000:3000 shanealexander09/pso-chat-docker:latest'
