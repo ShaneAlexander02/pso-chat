@@ -99,11 +99,10 @@ jobs:
           SSH_PRIVATE_KEY=$(terraform show -json | jq -r '.values.root_module.resources[] | select(.type == "tls_private_key" and .name == "rsa_4096") | .values.private_key_pem')
           echo "${SSH_PRIVATE_KEY}" > ssh_private_key.pem
           echo "::set-output name=ssh_private_key::ssh_private_key.pem"
-          echo "SSH PK is $SSH_PRIVATE_KEY"
+          echo "$SSH_PRIVATE_KEY"
 
       - name: Push Docker Image to EC2 Instance
         run: |
-          chmod 600 ssh_private_key.pem
           ssh -o StrictHostKeyChecking=no -i ssh_private_key.pem ec2-user@${{ env.INSTANCE_IP }} 'docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}'
           ssh -o StrictHostKeyChecking=no -i ssh_private_key.pem ec2-user@${{ env.INSTANCE_IP }} 'docker pull shanealexander09/pso-chat-docker:latest'
           ssh -o StrictHostKeyChecking=no -i ssh_private_key.pem ec2-user@${{ env.INSTANCE_IP }} 'docker run -d -p 3000:3000 shanealexander09/pso-chat-docker:latest'
