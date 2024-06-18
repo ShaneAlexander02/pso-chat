@@ -80,6 +80,9 @@ jobs:
           TF_VAR_access_key: ${{ secrets.TF_USER_AWS_KEY }}
           TF_VAR_secret_key: ${{ secrets.TF_USER_AWS_SECRET }}
 
+      - name: tunggu 30 detik buat instance baru settle
+        run: sleep 20
+
       - name: Get Instance IP
         id: instance_ip
         run: |
