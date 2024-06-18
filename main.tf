@@ -7,7 +7,6 @@ terraform {
   }
 }
 
-# Configure the AWS Provider
 provider "aws" {
   region = "ap-southeast-2"
   access_key = "AKIA2UC3CNSNSB2XARUB"
@@ -21,7 +20,7 @@ resource "tls_private_key" "rsa_4096" {
 
 variable "key_name" {
   description = "terraform-key"
-  default     = "terraform-key"  # Replace with a unique name
+  default     = "terraform-key"  
 }
 
 resource "aws_key_pair" "service_key_pair" {
