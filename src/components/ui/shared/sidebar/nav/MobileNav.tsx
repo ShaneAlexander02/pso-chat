@@ -8,6 +8,7 @@ import { useConversation } from "@/hooks/useConversation";
 import { useNavigation } from "@/hooks/useNavigation";
 import { UserButton } from "@clerk/nextjs";
 import { Badge } from "lucide-react";
+import { Badge } from "lucide-react";
 import  Link  from "next/link";
 
 const MobileNav = () => {
