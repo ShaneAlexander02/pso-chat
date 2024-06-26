@@ -24,3 +24,5 @@ Dalam proses ini, kami membuat proses testing terkait kode dengan JEST yang dapa
 6. Setelah itu, kami membuat instance menggunakan terraform sebagai IaC dengan membuat VPC dengan security group yang sesuai, membuat sshkey unik setiap run, dan menyamakan settingan. Output dari tahap ini yaitu suatu sshkey yang dapat ditarik saat ingin push docker ke instance tersebut dan juga unique IP.
 
 7. Tahap terakhir yaitu menggunakan github action kami untuk mendorong docker ke instance yang baru dibuat. Lalu melakukan DAST dengan Soos serta monitoring dengan cloudwatch.
+
+Jika ingin mencoba kode, pull lalu masukan secrets anda sendiri pada terraform.yml dan soos-dast.yml sesuai dengan keperluan lalu masukin detil - detil yang benar untuk di file main.tf menyesuikan instance yang ingin dibuat. Terakhr sesuaikan dockerfile dengan versi node serta instalasi lainnya jika diperlukan.
